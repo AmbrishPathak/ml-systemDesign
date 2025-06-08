@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning System Design Cheatsheet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; /* bg-slate-950 */
+            color: #d1d5db; /* text-gray-300 */
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .section-card {
+            background-color: #0f172a; /* bg-slate-900 */
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid #1e293b; /* border-slate-800 */
+            height: 100%;
+        }
+        .section-title {
+            font-weight: 700;
+            font-size: 1.125rem; /* text-lg */
+            color: #f8fafc; /* text-slate-50 */
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-right: 0.5rem;
+        }
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: #475569; /* slate-600 */
+            align-self: center;
+            margin: 0 0.5rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">ML System Design Cheatsheet</h1>
+            <p class="text-slate-400 mt-2">Architecture, Concepts, and Case Studies for Interviews</p>
+        </div>
+        
+        <!-- ML System Lifecycle -->
+        <div class="mb-8">
+             <h2 class="text-2xl font-bold text-white mb-4 text-center">End-to-End ML Architecture</h2>
+             <div class="p-4 bg-slate-900 rounded-lg flex flex-wrap justify-center items-center text-xs sm:text-sm">
+                <div class="text-center p-2"><span class="font-bold text-purple-400">Data Ingestion</span><br>(Kafka, S3)</div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="text-center p-2"><span class="font-bold text-cyan-400">Processing</span><br>(Spark, Flink)</div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="text-center p-2"><span class="font-bold text-sky-400">Training</span><br>(TensorFlow)</div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="text-center p-2"><span class="font-bold text-indigo-400">Registry</span><br>(MLflow)</div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="text-center p-2"><span class="font-bold text-teal-400">Serving</span><br>(API, Batch)</div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="text-center p-2"><span class="font-bold text-amber-400">Monitoring</span><br>(Prometheus)</div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="text-center p-2"><span class="font-bold text-rose-400">CI/CD</span><br>(Jenkins)</div>
+             </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Key Concepts -->
+            <div class="section-card md:col-span-2 lg:col-span-4">
+                 <h2 class="section-title text-xl text-violet-400">Key ML System Design Concepts</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                     <div><strong class="text-slate-200">Offline vs. Online Training:</strong><p class="text-slate-400">Offline is periodic retraining on large batches (days/weeks). Online (or near-real-time) is continuous model updating on fresh data streams (minutes/hours).</p></div>
+                     <div><strong class="text-slate-200">Batch vs. Streaming Inference:</strong><p class="text-slate-400">Batch is scoring large, static datasets (e.g., daily reports). Streaming is on-demand, low-latency prediction for single or mini-batch events (e.g., fraud check).</p></div>
+                     <div><strong class="text-slate-200">Model Drift Detection:</strong><p class="text-slate-400">Monitoring for statistical changes in input data (Data Drift) or degradation in model performance (Concept Drift) over time. Triggers alerts or retraining.</p></div>
+                     <div><strong class="text-slate-200">Canary Deployments:</strong><p class="text-slate-400">Safely rolling out a new model by directing a small percentage of traffic to it. Compare its performance against the old model before full rollout.</p></div>
+                 </div>
+            </div>
+
+            <!-- Case Study 1: Recommendation Engine -->
+            <div class="section-card lg:col-span-2">
+                <h2 class="section-title text-xl text-green-400">Case Study: Real-Time Recommendation Engine</h2>
+                <div class="space-y-4 text-sm">
+                    <div>
+                        <h3 class="font-semibold text-white mb-2">Architecture Components:</h3>
+                        <ul class="list-disc list-inside text-slate-400 space-y-1">
+                            <li><strong>Ingestion:</strong> Kafka for real-time user events (clicks, views). S3/GCS for historical data.</li>
+                            <li><strong>Processing:</strong> Spark/Flink for stream processing and feature engineering.</li>
+                            <li><strong>Feature Store:</strong> Redis/DynamoDB for online features (low-latency), S3 for offline features.</li>
+                            <li><strong>Training (2-stage):</strong>
+                                <ol class="list-decimal list-inside ml-4">
+                                    <li><strong class="text-slate-300">Candidate Generation:</strong> Offline training (e.g., Matrix Factorization on Spark) to generate hundreds of potential items.</li>
+                                    <li><strong class="text-slate-300">Ranking Model:</strong> More complex model (e.g., Gradient Boosted Trees, DNN) trained offline to rank candidates.</li>
+                                </ol>
+                            </li>
+                            <li><strong>Serving:</strong> A microservice that fetches candidates, gets real-time features, ranks them, and returns the top N via a REST API.</li>
+                             <li><strong>Monitoring:</strong> Track CTR, conversion rates, and model latency. Use A/B testing framework.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white mb-2">Challenges:</h3>
+                        <ul class="list-disc list-inside text-slate-400 space-y-1">
+                            <li><strong>Cold Start:</strong> How to recommend items to new users or for new items with no interaction data.</li>
+                             <li><strong>Scalability & Latency:</strong> Must serve recommendations for millions of users with <100ms latency.</li>
+                            <li><strong>Feedback Loop:</strong> User interactions must be fed back quickly to update recommendations.</li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h3 class="font-semibold text-white mb-2">10/10 Solution Outline:</h3>
+                        <p class="text-slate-400">Implement a hybrid two-stage architecture. For the **cold start** problem, use content-based filtering (using item/user metadata) as a fallback. For **scalability**, the candidate generation model narrows down the search space from millions of items to a few hundred. The ranking model, which is more computationally expensive, only operates on this smaller set. Use a feature store to decouple feature engineering from model training/serving. Finally, use an A/B testing framework to rigorously test new models on key business metrics before full rollout. Employ multi-armed bandit strategies for exploration vs. exploitation.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Case Study 2: Fraud Detection -->
+            <div class="section-card lg:col-span-2">
+                <h2 class="section-title text-xl text-rose-400">Case Study: Fraud Detection Pipeline</h2>
+                <div class="space-y-4 text-sm">
+                    <div>
+                        <h3 class="font-semibold text-white mb-2">Architecture Components:</h3>
+                        <ul class="list-disc list-inside text-slate-400 space-y-1">
+                            <li><strong>Ingestion:</strong> Kinesis/Kafka to receive financial transactions in real-time.</li>
+                            <li><strong>Stream Processing:</strong> Flink or ksqlDB to compute real-time features (e.g., transaction frequency in last 1 min, avg transaction amount).</li>
+                             <li><strong>Feature Store:</strong> Centralized repository for both streaming and batch features.</li>
+                            <li><strong>Model Training:</strong> Offline training on historical, labeled data using models like XGBoost, Random Forest, or an autoencoder for anomaly detection.</li>
+                            <li><strong>Model Serving:</strong> A low-latency microservice receives transaction data, enriches it with features from the feature store, and invokes the model for a real-time fraud score.</li>
+                            <li><strong>Feedback Loop:</strong> Analyst decisions (e.g., confirming a flagged transaction as fraud) are fed back as labels for future retraining.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-white mb-2">Challenges:</h3>
+                        <ul class="list-disc list-inside text-slate-400 space-y-1">
+                            <li><strong>Imbalanced Data:</strong> Fraudulent transactions are rare (<1% of data), making model training difficult.</li>
+                            <li><strong>Low Latency:</strong> Decisions must be made in milliseconds to approve/deny a transaction.</li>
+                            <li><strong>Feature Engineering:</strong> Creating meaningful features from raw transaction data is critical (e.g., temporal, categorical).</li>
+                            <li><strong>Adversarial Nature:</strong> Fraudsters constantly change their tactics, causing model drift.</li>
+                        </ul>
+                    </div>
+                     <div>
+                        <h3 class="font-semibold text-white mb-2">10/10 Solution Outline:</h3>
+                        <p class="text-slate-400">The core of the solution is a dual-pipeline architecture. A **streaming pipeline** handles real-time inference with strict latency SLAs (<50ms). An **offline pipeline** handles model retraining. To address **imbalanced data**, use techniques like SMOTE for oversampling the minority class or use anomaly detection models. The **feature store** is critical for consistency between training and serving. For the **adversarial nature**, implement robust monitoring for concept drift. When drift is detected, the model retraining pipeline is automatically triggered. The system should also include a rules engine for simple, deterministic checks (e.g., block transactions from a known bad IP) before invoking the ML model. Provide explainability (e.g., using SHAP values) for flagged transactions to help human analysts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
